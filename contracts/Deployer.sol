@@ -17,7 +17,7 @@ contract Deployer {
 
     function createERC721(string memory _name, string memory _symbol)
         public
-        returns (address memory)
+        returns (address)
     {
         string memory name = upper(_name);
         require(names[name] == false, "This name has already been used.");
