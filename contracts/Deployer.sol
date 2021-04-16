@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {OpenZeppelinERC721} from "./OpenZeppelinERC721.sol";
+import {ERC721BasicPortfolio} from "./ERC721BasicPortfolio.sol";
 
 contract Deployer {
     mapping(address => address) public contracts;
@@ -23,7 +23,7 @@ contract Deployer {
         require(symbols[symbol] == false, "This symbol has already been used.");
 
         address _contract =
-            address(new OpenZeppelinERC721(name, symbol, msg.sender));
+            address(new ERC721BasicPortfolio(name, symbol, msg.sender));
         contracts[msg.sender] = _contract;
 
         names[name] = true;

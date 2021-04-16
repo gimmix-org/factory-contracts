@@ -28,7 +28,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to other accounts.
  */
-contract OpenZeppelinERC721 is
+contract ERC721BasicPortfolio is
     Context,
     AccessControlEnumerable,
     ERC721Enumerable,
@@ -41,6 +41,7 @@ contract OpenZeppelinERC721 is
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     Counters.Counter private _tokenIdTracker;
+    mapping(uint256 => string) tokenURIs;
 
     /**
      * @dev Grants `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE` and `PAUSER_ROLE` to the
@@ -70,7 +71,7 @@ contract OpenZeppelinERC721 is
      *
      * - the caller must have the `MINTER_ROLE`.
      */
-    function mint(address to) public virtual {
+    function mint(address to, string memory _tokenURI) public virtual {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "ERC721PresetMinterPauserAutoId: must have minter role to mint"
@@ -79,7 +80,26 @@ contract OpenZeppelinERC721 is
         // We cannot just use balanceOf to create the new tokenId because tokens
         // can be burned (destroyed), so we need a separate counter.
         _mint(to, _tokenIdTracker.current());
+        tokenURIs[_tokenIdTracker.current()] = _tokenURI;
         _tokenIdTracker.increment();
+    }
+
+    /**
+     * @dev See {IERC721Metadata-tokenURI}.
+     */
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
+        return tokenURIs[tokenId];
     }
 
     /**

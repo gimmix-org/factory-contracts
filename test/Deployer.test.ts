@@ -1,4 +1,4 @@
-import { Deployer__factory, OpenZeppelinERC721__factory } from '../typechain';
+import { Deployer__factory, ERC721BasicPortfolio__factory } from '../typechain';
 
 import { generatedWallets } from '../utils/generatedWallets';
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -31,7 +31,7 @@ describe('Deployer', function () {
 
     expect(erc721ContractAddress).not.eq(constants.AddressZero);
 
-    const erc721Instance = await OpenZeppelinERC721__factory.connect(
+    const erc721Instance = await ERC721BasicPortfolio__factory.connect(
       erc721ContractAddress,
       userWallet1
     );
@@ -62,5 +62,10 @@ describe('Deployer', function () {
     expect(user2Deployer.createERC721('Test ERC721', 'TEST')).rejected;
 
     expect(user2Deployer.createERC721('Test ERC721', 'test')).rejected;
+
+    await erc721Instance.mint(userWallet1.address, 'https://example.com/1');
+
+    const token = await erc721Instance.tokenURI(0);
+    expect(token).eq('https://example.com/1');
   });
 });
