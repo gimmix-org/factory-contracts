@@ -15,7 +15,10 @@ contract Deployer {
         string symbol
     );
 
-    function createERC721(string memory _name, string memory _symbol) public {
+    function createERC721(string memory _name, string memory _symbol)
+        public
+        returns (address memory)
+    {
         string memory name = upper(_name);
         require(names[name] == false, "This name has already been used.");
 
@@ -30,6 +33,8 @@ contract Deployer {
         symbols[symbol] = true;
 
         emit ContractDeployed(msg.sender, _contract, name, symbol);
+
+        return _contract;
     }
 
     function upper(string memory _base) internal pure returns (string memory) {
