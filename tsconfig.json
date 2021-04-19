@@ -13,5 +13,5 @@
     "resolveJsonModule": true,
     "noUnusedLocals": true
   },
-  "include": ["./typechain", "./addresses", "./utils", "index.ts"]
+  "include": ["./typechain", "./addresses", "./utils"]
 }

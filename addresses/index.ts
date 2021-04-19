@@ -4,7 +4,7 @@ import mumbai from './80001.json';
 
 export const SupportedChainIds = [4, 5, 80001];
 
-export const getAddressesForChainId = chainId => {
+export const getAddressesForChainId = (chainId: number) => {
   switch (chainId) {
     case 4:
       return rinkeby;
