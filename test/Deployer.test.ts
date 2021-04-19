@@ -1,4 +1,4 @@
-import { Deployer__factory, ERC721BasicPortfolio__factory } from '../typechain';
+import { Deployer__factory, Portfolio__factory } from '../typechain';
 
 import { generatedWallets } from '../utils/generatedWallets';
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -23,7 +23,7 @@ describe('Deployer', function () {
       userWallet1
     );
 
-    await userDeployer.createERC721('Test ERC721', 'TEST');
+    await userDeployer.createPortfolio('Test Portfolio', 'TEST');
 
     const erc721ContractAddress = await userDeployer.contracts(
       userWallet1.address
@@ -31,7 +31,7 @@ describe('Deployer', function () {
 
     expect(erc721ContractAddress).not.eq(constants.AddressZero);
 
-    const erc721Instance = await ERC721BasicPortfolio__factory.connect(
+    const erc721Instance = await Portfolio__factory.connect(
       erc721ContractAddress,
       userWallet1
     );
@@ -59,9 +59,8 @@ describe('Deployer', function () {
       userWallet2
     );
 
-    expect(user2Deployer.createERC721('Test ERC721', 'TEST')).rejected;
-
-    expect(user2Deployer.createERC721('Test ERC721', 'test')).rejected;
+    expect(user2Deployer.createPortfolio('Test Portfolio', 'TEST')).rejected;
+    expect(user2Deployer.createPortfolio('Test Portfolio', 'test')).rejected;
 
     await erc721Instance.mint(userWallet1.address, 'https://example.com/1');
 

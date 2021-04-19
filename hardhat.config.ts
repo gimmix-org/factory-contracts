@@ -21,6 +21,23 @@ const config: HardhatUserConfig = {
         }
       }
     ]
+  },
+  etherscan: {
+    apiKey: require('dotenv').config({ path: '.env.4' }).parsed.ETHERSCAN_KEY
+  },
+  networks: {
+    rinkeby: {
+      chainId: 4,
+      url: require('dotenv').config({ path: '.env.4' }).parsed.RPC_ENDPOINT
+    },
+    goerli: {
+      chainId: 5,
+      url: require('dotenv').config({ path: '.env.5' }).parsed.RPC_ENDPOINT
+    },
+    mumbai: {
+      chainId: 80001,
+      url: require('dotenv').config({ path: '.env.80001' }).parsed.RPC_ENDPOINT
+    }
   }
 };
 

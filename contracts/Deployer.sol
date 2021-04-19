@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ERC721BasicPortfolio} from "./ERC721BasicPortfolio.sol";
+import "./Portfolio.sol";
 
 contract Deployer {
     mapping(address => address) public contracts;
@@ -15,7 +15,7 @@ contract Deployer {
         string symbol
     );
 
-    function createERC721(string memory _name, string memory _symbol)
+    function createPortfolio(string memory _name, string memory _symbol)
         public
         returns (address)
     {
@@ -25,8 +25,7 @@ contract Deployer {
         string memory symbol = upper(_symbol);
         require(symbols[symbol] == false, "This symbol has already been used.");
 
-        address _contract =
-            address(new ERC721BasicPortfolio(name, symbol, msg.sender));
+        address _contract = address(new Portfolio(name, symbol, msg.sender));
         contracts[msg.sender] = _contract;
 
         names[name] = true;
