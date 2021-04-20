@@ -6,32 +6,34 @@ import "./Bank.sol";
 
 contract Deployer {
     struct Deployment {
-        string template;
         address creatorAddress;
+        string template;
+        string name;
         address contractAddress;
     }
 
     mapping(address => Deployment[]) public contracts;
 
     event ContractDeployed(
-        address indexed _from,
-        address indexed _contract,
-        string template,
-        string name
+        address indexed creatorAddress,
+        string indexed template,
+        string name,
+        address contractAddress
     );
 
     function createPortfolio(string memory _name, string memory _symbol)
         public
     {
         // Deploy contract
-        address _contract = address(new Portfolio(_name, _symbol, msg.sender));
+        address _contractAddress =
+            address(new Portfolio(_name, _symbol, msg.sender));
 
         // Push to creator's array
         contracts[msg.sender].push(
-            Deployment("Portfolio", msg.sender, _contract)
+            Deployment(msg.sender, "Portfolio", _name, _contractAddress)
         );
 
-        emit ContractDeployed(msg.sender, _contract, "Portfolio", _name);
+        emit ContractDeployed(msg.sender, "Portfolio", _name, _contractAddress);
     }
 
     function createBank(
@@ -40,11 +42,13 @@ contract Deployer {
         uint256[] memory shares
     ) public {
         // Deploy contract
-        address _contract = address(new Bank(payees, shares));
+        address _contractAddress = address(new Bank(payees, shares));
 
         // Push to creator's array
-        contracts[msg.sender].push(Deployment("Bank", msg.sender, _contract));
+        contracts[msg.sender].push(
+            Deployment(msg.sender, "Bank", _name, _contractAddress)
+        );
 
-        emit ContractDeployed(msg.sender, _contract, "Bank", _name);
+        emit ContractDeployed(msg.sender, "Bank", _name, _contractAddress);
     }
 }
