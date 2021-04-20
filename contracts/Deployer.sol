@@ -2,52 +2,49 @@
 pragma solidity ^0.8.0;
 
 import "./Portfolio.sol";
+import "./Bank.sol";
 
 contract Deployer {
-    mapping(address => address) public contracts;
-    mapping(string => bool) public names;
-    mapping(string => bool) public symbols;
+    struct Deployment {
+        string template;
+        address creatorAddress;
+        address contractAddress;
+    }
+
+    mapping(address => Deployment[]) public contracts;
 
     event ContractDeployed(
         address indexed _from,
         address indexed _contract,
-        string name,
-        string symbol
+        string template,
+        string name
     );
 
     function createPortfolio(string memory _name, string memory _symbol)
         public
-        returns (address)
     {
-        string memory name = upper(_name);
-        require(names[name] == false, "This name has already been used.");
+        // Deploy contract
+        address _contract = address(new Portfolio(_name, _symbol, msg.sender));
 
-        string memory symbol = upper(_symbol);
-        require(symbols[symbol] == false, "This symbol has already been used.");
+        // Push to creator's array
+        contracts[msg.sender].push(
+            Deployment("Portfolio", msg.sender, _contract)
+        );
 
-        address _contract = address(new Portfolio(name, symbol, msg.sender));
-        contracts[msg.sender] = _contract;
-
-        names[name] = true;
-        symbols[symbol] = true;
-
-        emit ContractDeployed(msg.sender, _contract, name, symbol);
-
-        return _contract;
+        emit ContractDeployed(msg.sender, _contract, "Portfolio", _name);
     }
 
-    function upper(string memory _base) internal pure returns (string memory) {
-        bytes memory _baseBytes = bytes(_base);
-        for (uint256 i = 0; i < _baseBytes.length; i++) {
-            _baseBytes[i] = _upper(_baseBytes[i]);
-        }
-        return string(_baseBytes);
-    }
+    function createBank(
+        string memory _name,
+        address[] memory payees,
+        uint256[] memory shares
+    ) public {
+        // Deploy contract
+        address _contract = address(new Bank(payees, shares));
 
-    function _upper(bytes1 _b1) private pure returns (bytes1) {
-        if (_b1 >= 0x61 && _b1 <= 0x7A) {
-            return bytes1(uint8(_b1) - 32);
-        }
-        return _b1;
+        // Push to creator's array
+        contracts[msg.sender].push(Deployment("Bank", msg.sender, _contract));
+
+        emit ContractDeployed(msg.sender, _contract, "Bank", _name);
     }
 }

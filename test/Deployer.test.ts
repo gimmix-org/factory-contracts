@@ -10,7 +10,7 @@ chai.use(asPromised);
 const provider = new JsonRpcProvider();
 
 describe('Deployer', function () {
-  const [deployerWallet, userWallet1, userWallet2] = generatedWallets(provider);
+  const [deployerWallet, userWallet1] = generatedWallets(provider);
 
   it('Should successfully deploy an ERC721 contract', async function () {
     const Deployer = new Deployer__factory(deployerWallet);
@@ -25,46 +25,38 @@ describe('Deployer', function () {
 
     await userDeployer.createPortfolio('Test Portfolio', 'TEST');
 
-    const erc721ContractAddress = await userDeployer.contracts(
-      userWallet1.address
+    const portfolioDeployment = await userDeployer.contracts(
+      userWallet1.address,
+      0
     );
 
-    expect(erc721ContractAddress).not.eq(constants.AddressZero);
+    expect(portfolioDeployment.contractAddress).not.eq(constants.AddressZero);
 
-    const erc721Instance = await Portfolio__factory.connect(
-      erc721ContractAddress,
+    const portfolioInstance = await Portfolio__factory.connect(
+      portfolioDeployment.contractAddress,
       userWallet1
     );
 
-    const adminRole = await erc721Instance.DEFAULT_ADMIN_ROLE();
-    const minterRole = await erc721Instance.MINTER_ROLE();
-    const pauserRole = await erc721Instance.PAUSER_ROLE();
-    expect(await erc721Instance.hasRole(adminRole, userWallet1.address)).true;
-    expect(await erc721Instance.hasRole(minterRole, userWallet1.address)).true;
-    expect(await erc721Instance.hasRole(pauserRole, userWallet1.address)).true;
+    const adminRole = await portfolioInstance.DEFAULT_ADMIN_ROLE();
+    const minterRole = await portfolioInstance.MINTER_ROLE();
+    const pauserRole = await portfolioInstance.PAUSER_ROLE();
+    expect(await portfolioInstance.hasRole(adminRole, userWallet1.address))
+      .true;
+    expect(await portfolioInstance.hasRole(minterRole, userWallet1.address))
+      .true;
+    expect(await portfolioInstance.hasRole(pauserRole, userWallet1.address))
+      .true;
 
-    expect(await erc721Instance.hasRole(adminRole, deployerWallet.address))
+    expect(await portfolioInstance.hasRole(adminRole, deployerWallet.address))
       .false;
-    expect(await erc721Instance.hasRole(minterRole, deployerWallet.address))
+    expect(await portfolioInstance.hasRole(minterRole, deployerWallet.address))
       .false;
-    expect(await erc721Instance.hasRole(pauserRole, deployerWallet.address))
+    expect(await portfolioInstance.hasRole(pauserRole, deployerWallet.address))
       .false;
 
-    expect(await erc721Instance.hasRole(adminRole, userWallet2.address)).false;
-    expect(await erc721Instance.hasRole(minterRole, userWallet2.address)).false;
-    expect(await erc721Instance.hasRole(pauserRole, userWallet2.address)).false;
+    await portfolioInstance.mint(userWallet1.address, 'https://example.com/1');
 
-    const user2Deployer = Deployer__factory.connect(
-      deployer.address,
-      userWallet2
-    );
-
-    expect(user2Deployer.createPortfolio('Test Portfolio', 'TEST')).rejected;
-    expect(user2Deployer.createPortfolio('Test Portfolio', 'test')).rejected;
-
-    await erc721Instance.mint(userWallet1.address, 'https://example.com/1');
-
-    const token = await erc721Instance.tokenURI(0);
+    const token = await portfolioInstance.tokenURI(0);
     expect(token).eq('https://example.com/1');
   });
 });
