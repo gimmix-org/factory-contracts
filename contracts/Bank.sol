@@ -105,6 +105,14 @@ contract Bank is Context {
         return _payees;
     }
 
+    function balance(address account) public view returns (uint256) {
+        uint256 totalReceived = address(this).balance + _totalReleased;
+        return
+            (totalReceived * _shares[account]) /
+            _totalShares -
+            _released[account];
+    }
+
     /**
      * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
