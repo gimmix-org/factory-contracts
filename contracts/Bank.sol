@@ -31,7 +31,7 @@ contract Bank is Context {
 
     mapping(address => uint256) private _shares;
     mapping(address => uint256) private _released;
-    address[] public payees;
+    address[] private _payees;
 
     /**
      * @dev Creates an instance of `PaymentSplitter` where each account in `payees` is assigned the number of shares at
@@ -98,7 +98,11 @@ contract Bank is Context {
      * @dev Getter for the address of the payee number `index`.
      */
     function payee(uint256 index) public view returns (address) {
-        return payees[index];
+        return _payees[index];
+    }
+
+    function payees() public view returns (address[] memory) {
+        return _payees;
     }
 
     /**
@@ -139,7 +143,7 @@ contract Bank is Context {
             "PaymentSplitter: account already has shares"
         );
 
-        payees.push(account);
+        _payees.push(account);
         _shares[account] = shares_;
         _totalShares = _totalShares + shares_;
         emit PayeeAdded(account, shares_);
