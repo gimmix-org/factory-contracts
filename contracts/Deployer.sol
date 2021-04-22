@@ -44,9 +44,9 @@ contract Deployer {
 
         // Push to creator's array
         contracts[msg.sender].push(
-            Deployment(msg.sender, "Portfolio", _name, _contractAddress)
+            Deployment(msg.sender, "Shop", _name, _contractAddress)
         );
 
-        emit ContractDeployed(msg.sender, "Portfolio", _name, _contractAddress);
+        emit ContractDeployed(msg.sender, "Shop", _name, _contractAddress);
     }
 }
