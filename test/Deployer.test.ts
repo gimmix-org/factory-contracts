@@ -1,4 +1,4 @@
-import { Deployer__factory, Portfolio__factory } from '../typechain';
+import { Deployer__factory, Shop__factory } from '../typechain';
 
 import { generatedWallets } from '../utils/generatedWallets';
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -23,7 +23,7 @@ describe('Deployer', function () {
       userWallet1
     );
 
-    await userDeployer.createPortfolio('Test Portfolio', 'TEST');
+    await userDeployer.createShop('Test Shop', 'TEST');
 
     const portfolioDeployment = await userDeployer.contracts(
       userWallet1.address,
@@ -32,7 +32,7 @@ describe('Deployer', function () {
 
     expect(portfolioDeployment.contractAddress).not.eq(constants.AddressZero);
 
-    const portfolioInstance = await Portfolio__factory.connect(
+    const portfolioInstance = await Shop__factory.connect(
       portfolioDeployment.contractAddress,
       userWallet1
     );
